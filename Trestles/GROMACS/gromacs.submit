@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -A sds128
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=00:20:00
+#PBS -o gromacs_log
+#PBS -N GROMACS
+#PBS -V
+
+module load gromacs/4.6.5
+
+cd $PBS_O_WORKDIR #change to the working directory
+
+mpirun_rsh -np 4 -hostfile $PBS_NODEFILE /opt/gromacs/bin/mdrun_mpi -v -deffnm pdb1y6l-EM-vacuum.tpr -c pdb1y6l-EM-vacuum.gro

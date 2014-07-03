@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH -J LAMMPS           
+#SBATCH -o LAMMPS.o%j       
+#SBATCH -N 1 -n 1              
+#SBATCH -p serial
+#SBATCH -t 00:30:00        
+#SBATCH --mail-user=username@somewhere.edu
+#SBATCH --mail-type=begin  # email me when the job starts
+#SBATCH --mail-type=end    # email me when the job finishes
+
+module load lammps/20Mar14
+/opt/apps/intel13/mvapich2_1_9/lammps/20Mar14/bin/lmp_stampede < in.friction

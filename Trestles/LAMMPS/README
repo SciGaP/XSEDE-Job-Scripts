@@ -1,0 +1,11 @@
+This example is from:
+http://lammps.sandia.gov/tutorials/sor13/SoR_04-Hands_on_Simple_LAMMPS_Examples.pdf
+
+Required input files are:
+
+in.friction: from LAMMPS source code distributions. 
+
+Basic commands are:
+
+module load lammps/20Mar14
+lmp_stampede < in.friction

@@ -1,0 +1,2 @@
+To submit jobs on Trestles, run:
+[user@trestles]$ qsub <batch_script>

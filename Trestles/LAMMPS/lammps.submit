@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -A sds128
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=00:20:00
+#PBS -o lammps_log
+#PBS -N LAMMPS
+#PBS -V
+
+module load lammps/31Jan14
+
+cd $PBS_O_WORKDIR #change to the working directory
+mpirun_rsh -np 4 -hostfile $PBS_NODEFILE /opt/lammps/bin/lammps < in.friction

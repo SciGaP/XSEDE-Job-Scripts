@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH -J GROMACS
+#SBATCH -o GROMACS.o%j       
+#SBATCH -n 4              
+#SBATCH -p development
+#SBATCH -t 00:30:00        
+#SBATCH --mail-user=username@somewhere.edu
+#SBATCH --mail-type=begin  # email me when the job starts
+#SBATCH --mail-type=end    # email me when the job finishes
+
+module load gromacs/4.6.3
+ibrun /opt/apps/intel13/mvapich2_1_9/gromacs/4.6.3/bin/mdrun_mpi -v -deffnm pdb1y6l-EM-vacuum.tpr -c pdb1y6l-EM-vacuum.gro

@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -A sds128
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=00:20:00
+#PBS -o amber_log
+#PBS -N AMBER
+#PBS -V
+
+module load amber/14
+
+cd $PBS_O_WORKDIR #change to the working directory
+mpirun_rsh -np 4 -hostfile $PBS_NODEFILE /opt/amber/bin/sander.MPI -O -i 01_Min.in -o 01_Min.out -p prmtop -c inpcrd -r 01_Min.rst -inf 01_Min.mdinfo
+mpirun_rsh -np 4 -hostfile $PBS_NODEFILE /opt/amber/bin/sander.MPI -O -i 02_Heat.in -o 02_Heat.out -p prmtop -c 01_Min.rst -r 02_Heat.rst -x 02_Heat.mdcrd -inf 02_Heat.mdinfo
+mpirun_rsh -np 4 -hostfile $PBS_NODEFILE /opt/amber/bin/sander.MPI -O -i 03_Prod.in -o 03_Prod.out -p prmtop -c 02_Heat.rst -r 03_Prod.rst -x 03_Prod.mdcrd -inf 03_Prod.info
+

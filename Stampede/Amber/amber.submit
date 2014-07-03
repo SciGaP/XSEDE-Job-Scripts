@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH -J Amber
+#SBATCH -o Amber.o%j       
+#SBATCH -n 4              
+#SBATCH -p development
+#SBATCH -t 00:30:00        
+#SBATCH --mail-user=username@somewhere.edu
+#SBATCH --mail-type=begin  # email me when the job starts
+#SBATCH --mail-type=end    # email me when the job finishes
+
+module load amber/12.0
+ibrun /opt/apps/intel13/mvapich2_1_9/amber/12.0/bin/sander.MPI -O -i 01_Min.in -o 01_Min.out -p prmtop -c inpcrd -r 01_Min.rst -inf 01_Min.mdinfo
+ibrun /opt/apps/intel13/mvapich2_1_9/amber/12.0/bin/sander.MPI -O -i 02_Heat.in -o 02_Heat.out -p prmtop -c 01_Min.rst -r 02_Heat.rst -x 02_Heat.mdcrd -inf 02_Heat.mdinfo
+ibrun /opt/apps/intel13/mvapich2_1_9/amber/12.0/bin/sander.MPI -O -i 03_Prod.in -o 03_Prod.out -p prmtop -c 02_Heat.rst -r 03_Prod.rst -x 03_Prod.mdcrd -inf 03_Prod.info

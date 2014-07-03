@@ -1,0 +1,2 @@
+To submit on Stampede, update the user email address in the submit script, run:
+login1$ sbatch myjobscript

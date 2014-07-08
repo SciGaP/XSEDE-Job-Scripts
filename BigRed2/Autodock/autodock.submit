@@ -1,0 +1,11 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=00:20:00
+#PBS -N Autodock
+#PBS -q cpu
+#PBS -V
+
+module load autodock/4.2
+
+cd $PBS_O_WORKDIR
+aprun -n 4 /N/soft/cle4/autodock/4.2/bin/autodock4 -p ind.dpf -l ind.dlg 

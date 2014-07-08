@@ -1,0 +1,15 @@
+#!/bin/bash
+#PBS -q cpu
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=00:20:00
+#PBS -o gromacs_log
+#PBS -N GROMACS
+#PBS -V
+
+module swap PrgEnv-cray PrgEnv-gnu
+module load fftw
+module load gromacs/gnu/single/4.6.5
+
+cd $PBS_O_WORKDIR #change to the working directory
+
+aprun -n 4 /N/soft/cle4/gromacs/gnu/single/4.6.5/bin/mdrun_mpi -v -deffnm pdb1y6l-EM-vacuum.tpr -c pdb1y6l-EM-vacuum.gro

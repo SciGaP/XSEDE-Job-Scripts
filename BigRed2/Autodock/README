@@ -1,0 +1,25 @@
+This example is from:
+http://autodock.scripps.edu/faqs-help/tutorial/using-autodock-4-with-autodocktools
+
+Required input files are:
+
+AD4_parameters.dat
+hsg1.A.map
+hsg1.C.map
+hsg1.d.map
+hsg1.e.map
+hsg1.HD.map
+hsg1.maps.fld
+hsg1.NA.map
+hsg1.N.map
+hsg1.OA.map
+ind.dpf
+ind.pdbqt
+
+included in http://autodock.scripps.edu/faqs-help/tutorial/using-autodock-4-with-autodocktools/tutorial.tar.gz
+
+Basic commands are:
+
+module load autodock/4.2
+
+autodock4 -p ind.dpf -l ind.dlg 

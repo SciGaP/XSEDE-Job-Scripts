@@ -1,0 +1,27 @@
+This example is from: 
+http://md.chem.rug.nl/%7Emdcourse/md.html
+
+Require input files are:
+pdb1y6l.ent: from RCSB Protein Databank http://www.rcsb.org/pdb/home/home.do
+
+following are generated using GROMACS command:
+pdb2gmx -f pdb1y6l.ent -o pdb1y6l.gro -p pdb1y6l.top -ignh
+
+minim.mdp
+pdb1y6l.gro
+pdb1y6l.top
+pdb1y6l_Protein_chain_A.itp
+pdb1y6l_Protein_chain_B.itp
+pdb1y6l_Protein_chain_C.itp
+posre_Protein_chain_A.itp
+posre_Protein_chain_B.itp
+posre_Protein_chain_C.itp
+
+Basic commands are:
+
+module swap PrgEnv-cray PrgEnv-gnu
+module load fftw
+module load gromacs/gnu/single/4.6.5
+
+grompp -v -f minim.mdp -c pdb1y6l.gro -p pdb1y6l.top -o pdb1y6l-EM-vacuum.tpr
+mdrun -v -deffnm pdb1y6l-EM-vacuum.tpr -c pdb1y6l-EM-vacuum.gro

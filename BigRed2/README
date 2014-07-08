@@ -1,0 +1,2 @@
+To submit jobs on BigRed2, run:
+[user@bigred2]$ qsub <batch_script>

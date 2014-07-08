@@ -7,5 +7,5 @@ in.friction: from LAMMPS source code distributions.
 
 Basic commands are:
 
-module load lammps/20Mar14
-lmp_stampede < in.friction
+module load lammps/31Jan14
+lammps < in.friction

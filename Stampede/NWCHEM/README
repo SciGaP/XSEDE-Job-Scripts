@@ -1,0 +1,11 @@
+This example is from:
+http://www.nwchem-sw.org/index.php/Release62:Getting_Started
+
+Required input files are:
+
+water.nw: from the Water Molecule Sample Input File on the above page. 
+
+Basic commands are:
+
+module load nwchem/6.3
+/opt/apps/intel13/mvapich2_1_9/nwchem/6.3/bin/nwchem water.nw

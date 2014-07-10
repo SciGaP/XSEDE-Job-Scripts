@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -q cpu
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=00:20:00
+#PBS -o amber_log
+#PBS -N AMBER
+#PBS -V
+
+module swap PrgEnv-cray PrgEnv-gnu
+module load amber/gnu/mpi/12
+
+cd $PBS_O_WORKDIR #change to the working directory
+aprun -n 4 /N/soft/cle4/amber/gnu/mpi/12/amber12/bin/sander.MPI -O -i 03_Prod.in -o 03_Prod.out -p prmtop -c 02_Heat.rst -r 03_Prod.rst -x 03_Prod.mdcrd -inf 03_Prod.info
+

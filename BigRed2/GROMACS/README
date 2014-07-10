@@ -25,3 +25,6 @@ module load gromacs/gnu/single/4.6.5
 
 grompp -v -f minim.mdp -c pdb1y6l.gro -p pdb1y6l.top -o pdb1y6l-EM-vacuum.tpr
 mdrun -v -deffnm pdb1y6l-EM-vacuum.tpr -c pdb1y6l-EM-vacuum.gro
+
+For simplied version, required input files are:
+pdb1y6l-EM-vacuum.tpr

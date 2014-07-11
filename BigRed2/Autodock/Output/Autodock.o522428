@@ -1,0 +1,6 @@
+Application 2194685 resources: utime ~2993s, stime ~1s, Rss ~71648, inblocks ~108303, outblocks ~11956
+Job Cleanup ran on Tue Jul 8 12:54:18 EDT 2014
+===============================
+submit_args  : 	 submit_args = autodock.submit
+NIDS         : 	 1024
+NID Placement: 	 1024/4 

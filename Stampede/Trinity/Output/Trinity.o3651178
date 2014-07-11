@@ -1,0 +1,712 @@
+
+Lmod has detected the following error: Swap failed: "intel" is not loaded.
+
+
+The following have been reloaded with a version change:
+  1) trinityrnaseq/r20131110 => trinityrnaseq/r20130225
+
+Current settings:
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 256197
+max locked memory       (kbytes, -l) unlimited
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 16384
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) unlimited
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 8192
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+
+
+-since butterfly will eventually be run, lets test for proper execution of java
+Paired mode requires bowtie. Found bowtie at: /opt/apps/bowtie/1.0.0/bowtie
+
+#######################################
+Running Java Tests
+CMD: java -Xmx64m -jar /opt/apps/trinityrnaseq/r20130225/util/ExitTester.jar 0
+CMD finished (1 seconds)
+CMD: java -Xmx64m -jar /opt/apps/trinityrnaseq/r20130225/util/ExitTester.jar 1
+-we properly captured the java failure status, as needed.  Looking good.
+Java tests succeeded.
+###################################
+
+CMD: mkdir -p /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis
+CMD finished (0 seconds)
+Converting input files. (in parallel)CMD: /opt/apps/trinityrnaseq/r20130225/trinity-plugins/fastool/fastool --rev  --illumina-trinity --to-fasta /home1/01437/ogce/xsede_apps/Trinity/reads.left.fq >> left.fa
+CMD: /opt/apps/trinityrnaseq/r20130225/trinity-plugins/fastool/fastool --illumina-trinity --to-fasta /home1/01437/ogce/xsede_apps/Trinity/reads.right.fq >> right.fa
+CMD finished (1 seconds)
+CMD finished (1 seconds)
+Done converting input files.CMD: cat left.fa right.fa > both.fa
+CMD finished (0 seconds)
+-------------------------------------------
+----------- Jellyfish  --------------------
+-- (building a k-mer catalog from reads) --
+-------------------------------------------
+
+CMD: /opt/apps/trinityrnaseq/r20130225/trinity-plugins/jellyfish/bin/jellyfish count -t 4 -m 25 -s 305803185  both.fa
+CMD finished (2 seconds)
+CMD: /opt/apps/trinityrnaseq/r20130225/trinity-plugins/jellyfish/bin/jellyfish dump -L 1 mer_counts_0 >> jellyfish.kmers.fa
+CMD finished (0 seconds)
+CMD: touch jellyfish.1.finished
+----------------------------------------------
+--------------- Inchworm ---------------------
+-- (Linear contig construction from k-mers) --
+----------------------------------------------
+
+CMD finished (0 seconds)
+CMD: /opt/apps/trinityrnaseq/r20130225/Inchworm/bin/inchworm --kmers jellyfish.kmers.fa --run_inchworm -K 25 -L 25 --monitor 1  > /home1/01437/ogce/xsede_apps/Trinity/JobRun/inchworm.K25.L25.fa.tmp
+Kmer length set to: 25
+Min assembly length set to: 25
+Monitor turned on, set to: 1
+-reading Kmer occurences...
+ [0M] Kmers parsed.     
+ done parsing 520108 Kmers, 520108 added, taking 1 seconds.
+Sorting 520108 kmers ...Done sorting 520108 kmers, taking 0 seconds.
+Pruning kmers (min_kmer_count=1 min_any_entropy=0 min_ratio_non_error=0.05)
+
+CMD finished (2 seconds)
+CMD: touch /home1/01437/ogce/xsede_apps/Trinity/JobRun/inchworm.K25.L25.fa.finished
+CMD finished (0 seconds)
+CMD: /opt/apps/trinityrnaseq/r20130225/Chrysalis/Chrysalis -i both.fa -iworm /home1/01437/ogce/xsede_apps/Trinity/JobRun/inchworm.K25.L25.fa -o /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis -cpu 4  -min_glue 2 -min_iso_ratio 0.05 -glue_factor 0.05 -weldmer_size 48  -min 200 -dist 500 -max_reads 200000  -sort_buffer_size 2G -max_mem_reads 1000000  -strand 1  -paired  -reads_for_pairs both.fa  -butterfly /opt/apps/trinityrnaseq/r20130225/Butterfly/Butterfly.jar  2>&1 
+Path to executables: /opt/apps/trinityrnaseq/r20130225/Chrysalis/
+-------------------
+---- Chrysalis ----
+-------------------
+
+mkdir: cannot create directory `/home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis': File exists
+CMD: ln -sf /home1/01437/ogce/xsede_apps/Trinity/JobRun/inchworm.K25.L25.fa target.fa 
+CMD: bowtie-build target.fa target
+Settings:
+  Output files: "target.*.ebwt"
+  Line rate: 6 (line is 64 bytes)
+  Lines per side: 1 (side is 64 bytes)
+  Offset rate: 5 (one in 32)
+  FTable chars: 10
+  Strings: unpacked
+  Max bucket size: default
+  Max bucket size, sqrt multiplier: default
+  Max bucket size, len divisor: 4
+  Difference-cover sample period: 1024
+  Endianness: little
+  Actual local endianness: little
+  Sanity checking: disabled
+  Assertions: disabled
+  Random seed: 0
+  Sizeofs: void*:8, int:4, long:8, size_t:8
+Input files DNA, FASTA:
+  target.fa
+Reading reference sizes
+  Time reading reference sizes: 00:00:00
+Calculating joined length
+Writing header
+Reserving space for joined string
+Joining reference sequences
+  Time to join reference sequences: 00:00:00
+bmax according to bmaxDivN setting: 34340
+Using parameters --bmax 25755 --dcv 1024
+  Doing ahead-of-time memory usage test
+  Passed!  Constructing with these parameters: --bmax 25755 --dcv 1024
+Constructing suffix-array element generator
+Building DifferenceCoverSample
+  Building sPrime
+  Building sPrimeOrder
+  V-Sorting samples
+  V-Sorting samples time: 00:00:00
+  Allocating rank array
+  Ranking v-sort output
+  Ranking v-sort output time: 00:00:00
+  Invoking Larsson-Sadakane on ranks
+  Invoking Larsson-Sadakane on ranks time: 00:00:00
+  Sanity-checking and returning
+Building samples
+Reserving space for 12 sample suffixes
+Generating random suffixes
+QSorting 12 sample offsets, eliminating duplicates
+QSorting sample offsets, eliminating duplicates time: 00:00:00
+Multikey QSorting 12 samples
+  (Using difference cover)
+  Multikey QSorting samples time: 00:00:00
+Calculating bucket sizes
+  Binary sorting into buckets
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Binary sorting into buckets time: 00:00:00
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 1, merged 6; iterating...
+  Binary sorting into buckets
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Binary sorting into buckets time: 00:00:00
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Avg bucket size: 19622.3 (target: 25754)
+Converting suffix-array elements to index image
+Allocating ftab, absorbFtab
+Entering Ebwt loop
+Getting block 1 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 23190
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 23191
+Getting block 2 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 17682
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 17683
+Getting block 3 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 22561
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 22562
+Getting block 4 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 19345
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 19346
+Getting block 5 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 22583
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 22584
+Getting block 6 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 16636
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 16637
+Getting block 7 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 15359
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 15360
+Exited Ebwt loop
+fchr[A]: 0
+fchr[C]: 34675
+fchr[G]: 69310
+fchr[T]: 102941
+fchr[$]: 137362
+Exiting Ebwt::buildToDisk()
+Returning from initFromVector
+Wrote 4286424 bytes to primary EBWT file: target.1.ebwt
+Wrote 17176 bytes to secondary EBWT file: target.2.ebwt
+Re-opening _in1 and _in2 as input streams
+Returning from Ebwt constructor
+Headers:
+    len: 137362
+    bwtLen: 137363
+    sz: 34341
+    bwtSz: 34341
+    lineRate: 6
+    linesPerSide: 1
+    offRate: 5
+    offMask: 0xffffffe0
+    isaRate: -1
+    isaMask: 0xffffffff
+    ftabChars: 10
+    eftabLen: 20
+    eftabSz: 80
+    ftabLen: 1048577
+    ftabSz: 4194308
+    offsLen: 4293
+    offsSz: 17172
+    isaLen: 0
+    isaSz: 0
+    lineSz: 64
+    sideSz: 64
+    sideBwtSz: 56
+    sideBwtLen: 224
+    numSidePairs: 307
+    numSides: 614
+    numLines: 614
+    ebwtTotLen: 39296
+    ebwtTotSz: 39296
+    reverse: 0
+Total time for call to driver() for forward index: 00:00:00
+Reading reference sizes
+  Time reading reference sizes: 00:00:00
+Calculating joined length
+Writing header
+Reserving space for joined string
+Joining reference sequences
+  Time to join reference sequences: 00:00:00
+bmax according to bmaxDivN setting: 34340
+Using parameters --bmax 25755 --dcv 1024
+  Doing ahead-of-time memory usage test
+  Passed!  Constructing with these parameters: --bmax 25755 --dcv 1024
+Constructing suffix-array element generator
+Building DifferenceCoverSample
+  Building sPrime
+  Building sPrimeOrder
+  V-Sorting samples
+  V-Sorting samples time: 00:00:00
+  Allocating rank array
+  Ranking v-sort output
+  Ranking v-sort output time: 00:00:00
+  Invoking Larsson-Sadakane on ranks
+  Invoking Larsson-Sadakane on ranks time: 00:00:00
+  Sanity-checking and returning
+Building samples
+Reserving space for 12 sample suffixes
+Generating random suffixes
+QSorting 12 sample offsets, eliminating duplicates
+QSorting sample offsets, eliminating duplicates time: 00:00:00
+Multikey QSorting 12 samples
+  (Using difference cover)
+  Multikey QSorting samples time: 00:00:00
+Calculating bucket sizes
+  Binary sorting into buckets
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Binary sorting into buckets time: 00:00:00
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 1, merged 6; iterating...
+  Binary sorting into buckets
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Binary sorting into buckets time: 00:00:00
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Split 1, merged 1; iterating...
+  Binary sorting into buckets
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Binary sorting into buckets time: 00:00:00
+Splitting and merging
+  Splitting and merging time: 00:00:00
+Avg bucket size: 19622.3 (target: 25754)
+Converting suffix-array elements to index image
+Allocating ftab, absorbFtab
+Entering Ebwt loop
+Getting block 1 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 25095
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 25096
+Getting block 2 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 13152
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 13153
+Getting block 3 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 20387
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 20388
+Getting block 4 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 19391
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 19392
+Getting block 5 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 22728
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 22729
+Getting block 6 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 18324
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 18325
+Getting block 7 of 7
+  Reserving size (25755) for bucket
+  Calculating Z arrays
+  Calculating Z arrays time: 00:00:00
+  Entering block accumulator loop:
+  10%
+  20%
+  30%
+  40%
+  50%
+  60%
+  70%
+  80%
+  90%
+  100%
+  Block accumulator loop time: 00:00:00
+  Sorting block of length 18279
+  (Using difference cover)
+  Sorting block time: 00:00:00
+Returning block of 18280
+Exited Ebwt loop
+fchr[A]: 0
+fchr[C]: 34675
+fchr[G]: 69310
+fchr[T]: 102941
+fchr[$]: 137362
+Exiting Ebwt::buildToDisk()
+Returning from initFromVector
+Wrote 4286424 bytes to primary EBWT file: target.rev.1.ebwt
+Wrote 17176 bytes to secondary EBWT file: target.rev.2.ebwt
+Re-opening _in1 and _in2 as input streams
+Returning from Ebwt constructor
+Headers:
+    len: 137362
+    bwtLen: 137363
+    sz: 34341
+    bwtSz: 34341
+    lineRate: 6
+    linesPerSide: 1
+    offRate: 5
+    offMask: 0xffffffe0
+    isaRate: -1
+    isaMask: 0xffffffff
+    ftabChars: 10
+    eftabLen: 20
+    eftabSz: 80
+    ftabLen: 1048577
+    ftabSz: 4194308
+    offsLen: 4293
+    offsSz: 17172
+    isaLen: 0
+    isaSz: 0
+    lineSz: 64
+    sideSz: 64
+    sideBwtSz: 56
+    sideBwtLen: 224
+    numSidePairs: 307
+    numSides: 614
+    numLines: 614
+    ebwtTotLen: 39296
+    ebwtTotSz: 39296
+    reverse: 0
+Total time for backward call to driver() for mirror index: 00:00:00
+CMD: bowtie -a -m 20 --best --strata --threads 4 --quiet --chunkmbs 512 -q -S --sam-nohead  -f target both.fa > bowtie.out
+CMD: /opt/apps/trinityrnaseq/r20130225/Chrysalis//../trinity-plugins/coreutils/bin/sort --parallel=4 -T . -S 2G -k 1,1 -k 3,3 bowtie.out > bowtie.nameSorted.sam
+CMD: rm bowtie.out
+CMD: /opt/apps/trinityrnaseq/r20130225/Chrysalis//../util/scaffold_iworm_contigs.pl bowtie.nameSorted.sam /home1/01437/ogce/xsede_apps/Trinity/JobRun/inchworm.K25.L25.fa > iworm_scaffolds.txt
+-- running Chryalis: GraphFromFasta --
+Running: /opt/apps/trinityrnaseq/r20130225/Chrysalis/GraphFromFasta -i /home1/01437/ogce/xsede_apps/Trinity/JobRun/inchworm.K25.L25.fa -r both.fa -min_glue 2 -glue_factor 0.05 -min_iso_ratio 0.05 -kk 48 -strand  -report_welds  -scaffolding iworm_scaffolds.txt  > /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/GraphFromIwormFasta.out
+-----------------------------------------
+--- Chrysalis: GraphFromFasta -----------
+-- (cluster related inchworm contigs) ---
+-----------------------------------------
+
+-running on 4 threads
+GraphFromFasta: Reading file: /home1/01437/ogce/xsede_apps/Trinity/JobRun/inchworm.K25.L25.fa
+done!
+Counting k-mers...
+KmerAlignCore- Contigs: 0   KmerAlignCore- Contigs: 1000   KmerAlignCore- Contigs: 1305   
+done, assigning k-mers...
+KmerAlignCore- Contigs: 0   KmerAlignCore- Contigs: 1000   KmerAlignCore- Contigs: 1305   
+done!
+Phase 1: Collecting candidate weldmers between iworm contig pairs sharing k-1mers
+-setting omp for schedule chunksize to 3 for 1306 iworm contigs
+Processed: 76.5697 % of iworm contigs.    Processed: 99.9234 % of iworm contigs.    
+
+...done Phase 1. (0.419554 seconds)
+Setting up reads for streaming...
+Identifying reads that support welding of iworm contigs...
+Reads: (unknown count: streaming-mode)
+
+
+Done!
+Phase 2: Reclustering iworm contigs using welds.
+[0.0765697% done]                [7.88668% done]                [15.8499% done]                [22.8178% done]                [30.7044% done]                [38.2083% done]                [45.7121% done]                [53.6753% done]                [61.4855% done]                [68.7596% done]                [76.6462% done]                [84.3798% done]                [91.7305% done]                [99.2343% done]                
+now bubbling: 
+
+done bubbling.
+-- writing inchworm bundled.fasta and computing & partitioning component graph files for parallel processing.
+-- mapping reads to chrysalis components.
+Running: /opt/apps/trinityrnaseq/r20130225/Chrysalis/ReadsToTranscripts -i both.fa -f  /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/bundled.fasta -o /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis -strand  -max_mem_reads 1000000
+-------------------------------------------
+---- Chrysalis: ReadsToTranscripts --------
+-- (Place reads on Inchworm Bundles) ------
+-------------------------------------------
+
+Setting maximum number of reads to load in memory to 1000000
+Reading bundled inchworm contigs... 
+done!
+Assigning kmers to Iworm bundles ... done!
+Processing reads:
+ reading another 1000000... done
+[61150] reads analyzed for mapping.
+[51] components written.
+ reading another 1000000... finished reading reads
+Done
+-- writing quantifyGraph and butterfly commands for parallel processing.
+1/51 = 1.96078% of de Bruijn graphs constructed   2/51 = 3.92157% of de Bruijn graphs constructed   3/51 = 5.88235% of de Bruijn graphs constructed   4/51 = 7.84314% of de Bruijn graphs constructed   5/51 = 9.80392% of de Bruijn graphs constructed   6/51 = 11.7647% of de Bruijn graphs constructed   7/51 = 13.7255% of de Bruijn graphs constructed   8/51 = 15.6863% of de Bruijn graphs constructed   9/51 = 17.6471% of de Bruijn graphs constructed   10/51 = 19.6078% of de Bruijn graphs constructed   11/51 = 21.5686% of de Bruijn graphs constructed   12/51 = 23.5294% of de Bruijn graphs constructed   13/51 = 25.4902% of de Bruijn graphs constructed   14/51 = 27.451% of de Bruijn graphs constructed   15/51 = 29.4118% of de Bruijn graphs constructed   16/51 = 31.3726% of de Bruijn graphs constructed   17/51 = 33.3333% of de Bruijn graphs constructed   18/51 = 35.2941% of de Bruijn graphs constructed   19/51 = 37.2549% of de Bruijn graphs constructed   20/51 = 39.2157% of de Bruijn graphs constructed   21/51 = 41.1765% of de Bruijn graphs constructed   22/51 = 43.1373% of de Bruijn graphs constructed   23/51 = 45.098% of de Bruijn graphs constructed   24/51 = 47.0588% of de Bruijn graphs constructed   25/51 = 49.0196% of de Bruijn graphs constructed   26/51 = 50.9804% of de Bruijn graphs constructed   27/51 = 52.9412% of de Bruijn graphs constructed   28/51 = 54.902% of de Bruijn graphs constructed   29/51 = 56.8627% of de Bruijn graphs constructed   30/51 = 58.8235% of de Bruijn graphs constructed   31/51 = 60.7843% of de Bruijn graphs constructed   32/51 = 62.7451% of de Bruijn graphs constructed   33/51 = 64.7059% of de Bruijn graphs constructed   34/51 = 66.6667% of de Bruijn graphs constructed   35/51 = 68.6275% of de Bruijn graphs constructed   36/51 = 70.5882% of de Bruijn graphs constructed   37/51 = 72.549% of de Bruijn graphs constructed   38/51 = 74.5098% of de Bruijn graphs constructed   39/51 = 76.4706% of de Bruijn graphs constructed   40/51 = 78.4314% of de Bruijn graphs constructed   41/51 = 80.3922% of de Bruijn graphs constructed   42/51 = 82.3529% of de Bruijn graphs constructed   43/51 = 84.3137% of de Bruijn graphs constructed   44/51 = 86.2745% of de Bruijn graphs constructed   45/51 = 88.2353% of de Bruijn graphs constructed   46/51 = 90.1961% of de Bruijn graphs constructed   47/51 = 92.1569% of de Bruijn graphs constructed   48/51 = 94.1176% of de Bruijn graphs constructed   49/51 = 96.0784% of de Bruijn graphs constructed   50/51 = 98.0392% of de Bruijn graphs constructed   51/51 = 100% of de Bruijn graphs constructed   -done writing de Bruijn graphs.
+CMD finished (4 seconds)
+Chrysalis initial stage completed successfully.
+CMD: touch /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/chrysalis.finished
+CMD finished (0 seconds)
+---------------------------------------------------
+----------- Chrysalis: QuantifyGraph --------------
+-- (Integrate mapped reads into de Bruijn graph) --
+---------------------------------------------------
+
+CMD: /opt/apps/trinityrnaseq/r20130225/trinity-plugins/parafly/bin/ParaFly -c /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/quantifyGraph_commands -CPU 4 -failed_cmds failed_quantify_graph_commands.113754.txt -v -shuffle 
+Number of  Commands: 51
+succeeded(1)   1.96078% completed.    succeeded(2)   3.92157% completed.    succeeded(3)   5.88235% completed.    succeeded(4)   7.84314% completed.    succeeded(5)   9.80392% completed.    succeeded(6)   11.7647% completed.    succeeded(7)   13.7255% completed.    succeeded(8)   15.6863% completed.    succeeded(9)   17.6471% completed.    succeeded(10)   19.6078% completed.    succeeded(11)   21.5686% completed.    succeeded(12)   23.5294% completed.    succeeded(13)   25.4902% completed.    succeeded(14)   27.451% completed.    succeeded(15)   29.4118% completed.    succeeded(16)   31.3726% completed.    succeeded(17)   33.3333% completed.    succeeded(18)   35.2941% completed.    succeeded(19)   37.2549% completed.    succeeded(20)   39.2157% completed.    succeeded(21)   41.1765% completed.    succeeded(22)   43.1373% completed.    succeeded(23)   45.098% completed.    succeeded(24)   47.0588% completed.    succeeded(25)   49.0196% completed.    succeeded(26)   50.9804% completed.    succeeded(27)   52.9412% completed.    succeeded(28)   54.902% completed.    succeeded(29)   56.8627% completed.    succeeded(30)   58.8235% completed.    succeeded(31)   60.7843% completed.    succeeded(32)   62.7451% completed.    succeeded(33)   64.7059% completed.    succeeded(34)   66.6667% completed.    succeeded(35)   68.6275% completed.    succeeded(36)   70.5882% completed.    succeeded(37)   72.549% completed.    succeeded(38)   74.5098% completed.    succeeded(39)   76.4706% completed.    succeeded(40)   78.4314% completed.    succeeded(41)   80.3922% completed.    succeeded(42)   82.3529% completed.    succeeded(43)   84.3137% completed.    succeeded(44)   86.2745% completed.    succeeded(45)   88.2353% completed.    succeeded(46)   90.1961% completed.    succeeded(47)   92.1569% completed.    succeeded(48)   94.1176% completed.    succeeded(49)   96.0784% completed.    succeeded(50)   98.0392% completed.    succeeded(51)   100% completed.    
+
+All commands completed successfully. :-)
+
+CMD finished (2 seconds)
+CMD: touch /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/quantifyGraph_commands.run.finished
+CMD finished (0 seconds)
+---------------------------------------------------------------
+-------------------- Butterfly --------------------------------
+-- (Reconstruct transcripts from reads and de Bruijn graphs) --
+---------------------------------------------------------------
+
+Butterfly_cmds: /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/butterfly_commands.adj
+Inchworm and Chrysalis complete.  Butterfly commands to execute are provided here:
+/home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/butterfly_commands.adj
+
+CMD: /opt/apps/trinityrnaseq/r20130225/trinity-plugins/parafly/bin/ParaFly -c /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/butterfly_commands.adj -shuffle -CPU 4 -failed_cmds failed_butterfly_commands.113754.txt -v 
+Number of  Commands: 51
+succeeded(2)   3.92157% completed.    succeeded(2)   3.92157% completed.    succeeded(3)   5.88235% completed.    succeeded(4)   7.84314% completed.    succeeded(5)   9.80392% completed.    succeeded(6)   11.7647% completed.    succeeded(7)   13.7255% completed.    succeeded(8)   15.6863% completed.    succeeded(9)   17.6471% completed.    succeeded(10)   19.6078% completed.    succeeded(11)   21.5686% completed.    succeeded(12)   23.5294% completed.    succeeded(13)   25.4902% completed.    succeeded(14)   27.451% completed.    succeeded(15)   29.4118% completed.    succeeded(16)   31.3726% completed.    succeeded(17)   33.3333% completed.    succeeded(18)   35.2941% completed.    succeeded(19)   37.2549% completed.    succeeded(20)   39.2157% completed.    succeeded(21)   41.1765% completed.    succeeded(22)   43.1373% completed.    succeeded(23)   45.098% completed.    succeeded(24)   47.0588% completed.    succeeded(25)   49.0196% completed.    succeeded(26)   50.9804% completed.    succeeded(27)   52.9412% completed.    succeeded(28)   54.902% completed.    succeeded(29)   56.8627% completed.    succeeded(30)   58.8235% completed.    succeeded(31)   60.7843% completed.    succeeded(32)   62.7451% completed.    succeeded(33)   64.7059% completed.    succeeded(34)   66.6667% completed.    succeeded(35)   68.6275% completed.    succeeded(36)   70.5882% completed.    succeeded(37)   72.549% completed.    succeeded(38)   74.5098% completed.    succeeded(39)   76.4706% completed.    succeeded(40)   78.4314% completed.    succeeded(41)   80.3922% completed.    succeeded(42)   82.3529% completed.    succeeded(43)   84.3137% completed.    succeeded(44)   86.2745% completed.    succeeded(45)   88.2353% completed.    succeeded(46)   90.1961% completed.    succeeded(47)   92.1569% completed.    succeeded(48)   94.1176% completed.    succeeded(49)   96.0784% completed.    succeeded(50)   98.0392% completed.    succeeded(51)   100% completed.    
+
+All commands completed successfully. :-)
+
+CMD finished (11 seconds)
+CMD: /opt/apps/trinityrnaseq/r20130225/util/print_butterfly_assemblies.pl /home1/01437/ogce/xsede_apps/Trinity/JobRun//chrysalis/component_file_listing.txt > Trinity.fasta.tmp
+CMD finished (0 seconds)
+
+
+###################################################################
+Butterfly assemblies are written to /home1/01437/ogce/xsede_apps/Trinity/JobRun//Trinity.fasta
+###################################################################
+
+
